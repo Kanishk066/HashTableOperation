@@ -13,7 +13,6 @@ class MyMapNode<K, V> {
 class MyHashMap<K, V> {
      LinkedList<MyMapNode<K, V>> buckets;
      int size;
-
     public MyHashMap() {
         buckets = new LinkedList<MyMapNode<K, V>>();
         size = 0;
@@ -21,12 +20,10 @@ class MyHashMap<K, V> {
             buckets.add(null);
         }
     }
-
-    private int getBucketIndex(K key) {
+        int getBucketIndex(K key) {
         int hashCode = key.hashCode();
         return hashCode % buckets.size();
     }
-
     public void put(K key, V value) {
         int bucketIndex = getBucketIndex(key);
         MyMapNode<K, V> head = buckets.get(bucketIndex);
@@ -60,20 +57,30 @@ class MyHashMap<K, V> {
 }
 public class HashTableOperation {
     public static void main(String[] args) {
-        System.out.println("Welcome to the Hash Table Program");
-        String sentence = "To be or not to be";
-        MyHashMap<String, Integer> wordFrequencyMap = new MyHashMap<String, Integer>();
-        String[] words = sentence.split(" ");
+        String paragraph = "Paranoids are not paranoid because they are paranoid but because they keep putting themselves deliberately into paranoid avoidable situations";
+        MyHashMap<String, Integer>[] wordFrequencyMap = new MyHashMap[10];
+        for (int i = 0; i < 10; i++) {
+            wordFrequencyMap[i] = new MyHashMap<String, Integer>();
+        }
+        String[] words = paragraph.split(" ");
         for (String word : words) {
-            Integer frequency = wordFrequencyMap.get(word);
+            int bucketIndex = Math.abs(word.hashCode()) % 10;
+            MyHashMap<String, Integer> map = wordFrequencyMap[bucketIndex];
+            Integer frequency = map.get(word);
             if (frequency == null) {
-                wordFrequencyMap.put(word, 1);
+                map.put(word, 1);
             } else {
-                wordFrequencyMap.put(word, frequency + 1);
+                map.put(word, frequency + 1);
             }
         }
-        for (String word : words) {
-            System.out.println(word + " : " + wordFrequencyMap.get(word));
+        for (int i = 0; i < 10; i++) {
+            MyHashMap<String, Integer> map = wordFrequencyMap[i];
+            for (String word : map.keySet()) {
+                System.out.println(word + " : " + map.get(word));
+            }
         }
     }
 }
+
+
+
