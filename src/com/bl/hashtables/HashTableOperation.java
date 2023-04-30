@@ -4,15 +4,18 @@ class MyMapNode<K, V> {
     K key;
     V value;
     MyMapNode<K, V> next;
+
     public MyMapNode(K key, V value) {
         this.key = key;
         this.value = value;
         this.next = null;
     }
 }
+
 class MyHashMap<K, V> {
-     LinkedList<MyMapNode<K, V>> buckets;
-     int size;
+    private LinkedList<MyMapNode<K, V>> buckets;
+    private int size;
+
     public MyHashMap() {
         buckets = new LinkedList<MyMapNode<K, V>>();
         size = 0;
@@ -20,10 +23,12 @@ class MyHashMap<K, V> {
             buckets.add(null);
         }
     }
-        int getBucketIndex(K key) {
+
+    private int getBucketIndex(K key) {
         int hashCode = key.hashCode();
         return hashCode % buckets.size();
     }
+
     public void put(K key, V value) {
         int bucketIndex = getBucketIndex(key);
         MyMapNode<K, V> head = buckets.get(bucketIndex);
@@ -40,6 +45,7 @@ class MyHashMap<K, V> {
         buckets.set(bucketIndex, newNode);
         size++;
     }
+
     public V get(K key) {
         int bucketIndex = getBucketIndex(key);
         MyMapNode<K, V> head = buckets.get(bucketIndex);
@@ -47,6 +53,26 @@ class MyHashMap<K, V> {
             if (head.key.equals(key)) {
                 return head.value;
             }
+            head = head.next;
+        }
+        return null;
+    }
+
+    public V remove(K key) {
+        int bucketIndex = getBucketIndex(key);
+        MyMapNode<K, V> head = buckets.get(bucketIndex);
+        MyMapNode<K, V> prev = null;
+        while (head != null) {
+            if (head.key.equals(key)) {
+                if (prev == null) {
+                    buckets.set(bucketIndex, head.next);
+                } else {
+                    prev.next = head.next;
+                }
+                size--;
+                return head.value;
+            }
+            prev = head;
             head = head.next;
         }
         return null;
@@ -73,6 +99,14 @@ public class HashTableOperation {
                 map.put(word, frequency + 1);
             }
         }
+        // Remove the word "avoidable" from the word frequency map
+        String wordToRemove = "avoidable";
+        int bucketIndexToRemove = Math.abs(wordToRemove.hashCode()) % 10;
+        MyHashMap<String, Integer> mapToRemoveFrom = wordFrequencyMap[bucketIndexToRemove];
+        mapToRemoveFrom.remove(wordToRemove);
+
+        // Print the updated word frequency map after removal of the word "avoidable"
+        System.out.println("\nUpdated word frequency map after removal of the word 'avoidable':");
         for (int i = 0; i < 10; i++) {
             MyHashMap<String, Integer> map = wordFrequencyMap[i];
             for (String word : map.keySet()) {
